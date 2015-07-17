@@ -2,9 +2,9 @@
 
 Includes the basic tools to load a song and start playing.
 
-## Development
+http://parsons-cc.github.io/music-video-template
 
-### Installation
+# Installation & Running
 
  1. [Install Python v3.x] (https://www.python.org/downloads/)
  2. Run the server script

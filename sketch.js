@@ -1,6 +1,8 @@
 // start volume of the song (value between 0 and 1)
 var volume = 1.0;
-
+var songUrl = 'https://dl.dropboxusercontent.com/u/2100102/parsons-cc/this-must-be-the%20place.mp3';
+var trans = { x:0, y:0 };
+var dots = [];
 /**
  * @name preload
  * @description
@@ -11,7 +13,7 @@ var volume = 1.0;
  */
 function preload() {
   // load the sound file!
-  song = loadSound('https://dl.dropboxusercontent.com/u/2100102/parsons-cc/seu-mane-luiz.mp3');
+  song = loadSound(songUrl);
 }
 
 
@@ -33,6 +35,12 @@ function setup() {
 
   // start the song in loop mode
   song.loop();
+
+  // trans.x = width/2;
+  // trans.y = height/2;
+
+  translate(width/2, height/2);
+  angleMode(DEGREES);
 }
 
 
@@ -45,9 +53,46 @@ function setup() {
  * http://p5js.org/reference/#/p5/draw
  */
 function draw() {
+  var maxDotLength = 25;
+  var smallDotRadius = 3;
+  var bigDotRadius = 30;
+
+
+  background(0);
+  // showTime(song, 10, 50);
+
+  push();
+    trans.y += 1;
+
+    if(frameCount % 20 == 0) {
+      // console.log('save dot', trans.x, trans.y);
+      dots.push({ x: trans.x, y: trans.y });
+      trans.x += 5;
+      dots.push({ x: trans.x, y: trans.y });
+
+    }
+    // translate(trans.x, trans.y);
+    fill(255, 255, 255, 120);
+
+    for(var i = 0; i < dots.length; i++) {
+      // translate(dots[i].x, dots[i].y);
+      rotate(frameCount);
+      ellipse(dots[i].x, dots[i].y, smallDotRadius, smallDotRadius);
+    }
+
+    if(dots.length > maxDotLength) {
+      dots.pop();
+    }
+
+    // console.log('dot length '+dots.length);
+
+  pop();
 
   if(song.isPlaying()) {
     // things to do when the song is playing
+    fill(255, 100, 100, 100);
+    noStroke();
+    ellipse(0, 0, bigDotRadius, bigDotRadius);
   }
 
   if(!song.isPlaying()) {
@@ -66,4 +111,36 @@ function draw() {
  */
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
+}
+
+function showTime(song, x, y) {
+  var time = song.currentTime();
+  var minutes = floor(time / 60) + '';
+  var seconds = floor(time - (minutes * 60)) + '';
+
+  if(minutes.length < 2) {
+    minutes = '0' + minutes;
+  }
+
+  if(seconds.length < 2) {
+    seconds = '0' + seconds;
+  }
+
+  var output = minutes + ':' + seconds + ' - ' +  floor(time);
+
+  push();
+    textFont('Helvetica');
+    textSize(20);
+    text(output, x, y);
+  pop()
+}
+
+function keyPressed() {
+  if(key === ' ') {
+    if(song.isPaused()) {
+      song.play();
+    } else {
+      song.pause();
+    }
+  }
 }
